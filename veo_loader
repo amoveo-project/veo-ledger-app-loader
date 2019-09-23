@@ -1,0 +1,127 @@
+#!/sbin/openrc-run
+# Copyright (c) 2018 muXxer
+# Modified (c) 2019 vden
+
+## Functions
+_bold=$(tput bold)
+_reset=$(tput sgr0)
+
+_red=$(tput setaf 1)
+_green=$(tput setaf 2)
+_yellow=$(tput setaf 3)
+
+function print_ok   { printf "${_bold}${_green}%s${_reset}\n" "$@"; }
+function print_err  { printf "${_bold}${_red}%s${_reset}\n" "$@"; }
+function print_warn { printf "${_bold}${_yellow}%s${_reset}\n" "$@"; }
+
+depend()
+{
+	after networking sshd
+}
+
+start()
+{
+	ebegin "Downloading Amoveo Ledger App..."
+
+	# echo ""
+	# print_warn "Please read our documentation carefully at https://github.com/IOTA-Ledger/blue-app-iota/"
+
+	echo ""
+	print_ok "Downloading latest compiled binary from https://github.com/amoveo-project/ledger-app-veo/releases..."
+	echo ""
+
+	mkdir -p /root/veo-ledger/download/
+	cd /root/veo-ledger/download/
+	latest_file=`curl -s https://api.github.com/repos/amoveo-project/ledger-app-veo/releases | grep browser_download_url | grep nanos-app | grep .zip | head -n 1 | cut -d '"' -f 4`
+	retVal=$?
+	if [ $retVal -ne 0 ]; then
+		echo ""
+		print_err "No compiled binary found in the GitHub repository! Do you have a working internet connection? Rebooting..."
+		rm -R /root/veo-ledger/download/
+		sleep 10
+		reboot
+		eend $retVal
+	fi
+
+	curl -L $latest_file -O
+	retVal=$?
+	if [ $retVal -ne 0 ]; then
+		echo ""
+		print_err "Downloading the latest compiled binary from GitHub failed! Do you have a working internet connection? Rebooting..."
+		rm -R /root/veo-ledger/download/
+		sleep 10
+		reboot
+		eend $retVal
+	fi
+
+	file_name=`echo $latest_file | rev | cut -d '/' -f 1 | rev`
+	echo ""
+	print_ok "Downloaded:"
+	print_ok '   File name = "'${file_name}'"'
+
+	echo ""
+	#echo "Unzipping the file and comparing the checksum..."
+	print_ok "Unzipping the file and verifying the digital signature..."
+	echo ""
+	unzip ${file_name}
+	echo ""
+	#sha256sum -c app.hex.sha256
+	gpg --verify app.hex.asc
+	retVal=$?
+	if [ $retVal -ne 0 ]; then
+		echo ""
+		#echo "Checksum missmatch! Something went wrong! Please try again! Rebooting..."
+		print_err "Digital signature not valid! Something went wrong! Please try again! Rebooting..."
+		rm -R /root/veo-ledger/download/
+		sleep 10
+		reboot
+		eend $retVal
+	fi
+	echo ""
+	print_ok "File unzipped and digital signature valid!"
+
+	echo ""
+	print_warn "Plugin your Ledger Nano S now and forward it in VirtualBox! You have 5 minutes to do this."
+	print_warn "Searching for Ledger Nano S..."
+	echo ""
+
+	time_ms=0
+	while [ $time_ms -le 300000 ]
+	do
+		if [ -e /dev/hidraw1 ]; then
+			break
+		fi
+
+		usleep 500000
+		time_ms=$(( $time_ms + 500 ))
+	done
+
+	cd /root/veo-ledger/
+	python3 download_app.py
+	retVal=$?
+	rm -R /root/veo-ledger/download/
+	if [ $retVal -ne 0 ]; then
+		echo ""
+		if [ $retVal -eq 2 ]; then
+			print_err "Ledger Nano S Firmware is too old! Please update your Ledger Nano S Firmware and try again! Shutting down VM..."
+			sleep 5
+			poweroff
+		else
+			print_err "Something went wrong! Please try again! Rebooting..."
+			sleep 5
+			reboot
+		fi
+	else
+		echo ""
+		print_ok "Amoveo App installed successfully! Shutting down VM..."
+		sleep 3
+		poweroff
+	fi
+	eend 0
+}
+
+stop()
+{
+	ebegin ""
+	eend 0
+}
