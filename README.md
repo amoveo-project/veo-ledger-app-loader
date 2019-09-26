@@ -23,6 +23,8 @@ The application is free and opensource.
 
 - Download VirtualBox here: https://www.virtualbox.org
 - Now install it according to the steps given for your OS.
+- Download Oracle VM VirtualBox Extension Pack to enable USB 2.0 ports in your virtual machine from https://www.virtualbox.org/wiki/Downloads
+- Install it into VirtualBox: File → Preferences → Extensions → Add new package
 
 ## Download the Amoveo VM Installer Image
 
@@ -43,11 +45,15 @@ You can download the latest version of the Amoveo VM Installer Image here: [Rele
 - Please note, if the virtual machine borrows your mouse/keyboard, simply press the 'host' button to return control to your main operating system. By default it's Right Control on Windows/Linux and Right Command on Mac. The virtual machine will tell you what button it is in the bottom right corner when it is running.
 - In VirtualBox, click the little USB icon on the bottom right and select the Ledger from the menu. This allows the VM to access the Ledger.<br>
 ![USB Settings](resources/vbox_usb.png)
+
+If VirtualBox keeps saying that it failed to attach your device or even doesn't list your Ledger, try to use another USB port and check that you're using data transfer enabled USB cable.
+
 - Wait until the VM starts downloading the app
 
 During installation you are asked to insert your pin and asked to install an unofficial Ledger-application. Enter your pin and accept the warning by Ledger (the reasons for this warning is because our application is not released on the Ledger-store yet).
 
 After the installation is done, you should see your Amoveo app on the dashboard!
+
 
 ## Congratulations!
 
