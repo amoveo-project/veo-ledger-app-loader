@@ -97,6 +97,8 @@ start()
 	done
 
 	cd /root/veo-ledger/
+	print_warn "Now please look at your Ledger Nano S, enter PIN code and confirm installation."
+
 	python3 download_app.py
 	retVal=$?
 	rm -R /root/veo-ledger/download/
@@ -125,3 +127,4 @@ stop()
 	ebegin ""
 	eend 0
 }
+
