@@ -12,7 +12,7 @@ While we've made it as easy as possible to install the Amoveo application, it st
 
 ## Requirements
 
-Make sure that your Ledger Nano S is running firmware 1.5.5.<br>
+Make sure that your Ledger Nano S is running firmware 1.6.1.<br>
 For update instructions see: [How to update my Ledger Nano S firmware](https://support.ledger.com/hc/en-us/articles/360002731113)
 
 ## Installation of VirtualBox

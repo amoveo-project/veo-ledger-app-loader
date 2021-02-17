@@ -3,7 +3,7 @@ import os, sys
 python_cmd          = "python3"
 target_id           = 0x31100004
 min_version_os      = 0x01050500    # e.g. 1.5.5 => 1.5.5.0 => 0x01050500
-min_version_mcu     = 0x01070000    # e.g. 1.7   => 1.7.0.0 => 0x01070000
+min_version_mcu     = 0x01000000    # e.g. 1.7   => 1.7.0.0 => 0x01070000
 file_name           = "/root/veo-ledger/download/app.hex"
 data_size           = 0x00000000    # `cat debug/app.map |grep _nvram_data_size | tr -s ' ' | cut -f2 -d' '`
 icon_hex            = "0100000000ffffff00ffffffff1ff88ff067e633ce13ce4bc7e3d273c873cc67e60ff11ff8ffffffff"
